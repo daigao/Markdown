@@ -1,0 +1,126 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Marked in the browser</title>
+	<link rel="stylesheet" href="index/w3.css">
+	<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+	<script src="index/HeightCode.js"></script>
+	<script src="index/markdown.mini.js"></script>
+	<style>
+		* {
+			outline: none;
+			font-size: 1.1rem;
+		}
+
+		@font-face {
+			font-family: 'Ubuntu Mono';
+			font-style: normal;
+			font-weight: 400;
+			src: local('Ubuntu Mono'), local('UbuntuMono-Regular'), url(index/KFOjCneDtsqEr0keqCMhbCc6CsQ.woff2) format('woff2');
+			unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+		}
+
+		html,
+		body {
+			height: 100%;
+		}
+
+		[class^=w3],
+		code,
+		i {
+			font-family: Ubuntu Mono, Monaco;
+		}
+
+		pre {
+			display: block;
+			padding: 9.5px;
+			margin: 0 0 10px;
+			line-height: 1.42857143;
+			color: #333;
+			word-break: break-all;
+			word-wrap: break-word;
+			background-color: #f5f5f5;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+		}
+
+		.title {
+			color: #a0aabf;
+		}
+
+		.w3-height {
+			height: -webkit-calc(100% - 70.15px);
+			height: calc(100% - 70.15px);
+		}
+
+		input {
+			color: #373d49;
+		}
+
+		.md_source {
+			border: none;
+			outline: none;
+			line-height: 2rem;
+			height: 100%;
+			color: #373d49;
+		}
+
+		.md_render {
+			color: #373d49;
+			overflow: scroll;
+			border-left: 1px solid #a0aabf;
+			line-height: 2rem;
+			height: 100%;
+		}
+	</style>
+	<script>
+		$(function () {
+			window.addEventListener("keydown", function (e) {
+				//可以判断是不是mac，如果是mac,ctrl变为花键     
+				//event.preventDefault() 方法阻止元素发生默认的行为。 
+				if ((e.key == 's' || e.key == 'S') && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
+					e.preventDefault();
+					var html = $('.md_source').val();
+					const blob = new Blob([html], {
+						type: 'text/markdown'
+					});
+					var fileName = $('.title').val();
+					if (fileName.indexOf(".md") < 0 || fileName.indexOf(".MD") < 0) {
+						fileName += ".md";
+					}
+					let download = document.createElement('a');
+					const objectURL = URL.createObjectURL(blob);
+					download.href = objectURL;
+					download.download = fileName;
+					download.click();
+					URL.revokeObjectURL(objectURL);
+					document.body.removeChild(download);
+				}
+			}, false);
+		})
+		function inputs() {
+			var html = $('.md_source').val();
+			$('.md_render').html(marked(html));
+
+			$('pre code').each(function () {
+				$(this).heightcode();
+			})
+		}
+	</script>
+</head>
+
+<body>
+	<div class="w3-container w3-border-bottom">
+		<label class="">Document Name</label>
+		<input class="title w3-input w3-border-0" type="text" placeholder="Untitled Document.md">
+	</div>
+	<div class="w3-row w3-height">
+		<textarea class="md_source w3-container w3-half" oninput="inputs()"></textarea>
+		<div class="md_render w3-container w3-half"></div>
+	</div>
+</body>
+
+</html>
